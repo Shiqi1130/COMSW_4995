@@ -13,7 +13,7 @@ output includes the directory and the name of the image you have processed.
 
 
 ## MZSR
-Credit goes to https://github.com/JWSoh/MZSR
+Credit goes to https://github.com/JWSoh/MZSR.
 type in :
 ```
 python main.py --gpu 0 --inputpath Input/set/ --gtpath GT/set/ --savepath results/scale4 --kernelpath Input/g20/kernel.mat --model 1 --num 5  --scale 4
