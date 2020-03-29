@@ -17,3 +17,8 @@ Credit goes to https://github.com/JWSoh/MZSR
 
 ## SinGAN
 Credit goes to https://github.com/tamarott/SinGAN
+
+To implement SR module, run
+```
+python SR.py --input_name <pic_name.jpg> --sr_factor <sr_factor, default=4>
+```
