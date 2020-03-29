@@ -7,11 +7,10 @@ tf.disable_v2_behavior
 
 class Test(object):
     def __init__(self, model_path, save_path,kernel, scale, conf, method_num, num_of_adaptation):
-        methods=['direct', 'direct', 'bicubic', 'direct']
+        methods=['direct', 'direct']
         self.save_results=True
         self.max_iters=num_of_adaptation
         self.display_iter = 1
-
         self.upscale_method= 'cubic'
         self.noise_level = 0.0
 
@@ -123,22 +122,6 @@ class Test(object):
                     self.learning_rate=5e-3
 
             elif self.method_num == 1:
-                '''Multi-scale'''
-                if self.iter < 3:
-                    self.learning_rate=1e-2
-                else:
-                    self.learning_rate=5e-3
-
-            elif self.method_num == 2:
-                '''bicubic'''
-                if self.iter == 0:
-                    self.learning_rate = 0.01
-                elif self.iter < 3:
-                    self.learning_rate = 0.01
-                else:
-                    self.learning_rate = 0.001
-
-            elif self.method_num == 3:
                 ''''scale 4'''
                 if self.iter ==0:
                     self.learning_rate=1e-2
@@ -227,9 +210,6 @@ class Test(object):
         scale=int(self.scale)
         PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8))[scale:-scale, scale:-scale],
                   rgb2y(processed_output)[scale:-scale, scale:-scale])
-
-        # PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8)),
-        #           rgb2y(processed_output))
 
         self.psnr.append(PSNR)
 

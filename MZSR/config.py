@@ -8,7 +8,6 @@ parser.add_argument('--kernelpath', type=str, dest='kernelpath', default='Input/
 parser.add_argument('--savepath', type=str, dest='savepath', default='results/Set5')
 parser.add_argument('--model', type=int, dest='model', choices=[0,1,2,3], default=0)
 parser.add_argument('--num', type=int, dest='num_of_adaptation', choices=[1,5,10], default=1)
-
 parser.add_argument('--gpu', type=str, dest='gpu', default='0')
-
+parser.add_argument('--scale', type=int, dest='scale', default=2)
 args= parser.parse_args()

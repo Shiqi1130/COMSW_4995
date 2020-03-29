@@ -12,8 +12,6 @@ def imresize(img, scale=None, output_shape=None, kernel=None, antialiasing=True,
     if type(kernel) == np.ndarray and scale <= 1:
         if ds_method=='direct':
             return numeric_kernel_dir(img, kernel, scale, output_shape, kernel_shift_flag)
-        elif ds_method=='bicubic':
-            return numeric_kernel_bic(img, kernel, scale, output_shape, kernel_shift_flag)
         else:
             raise ValueError('Downscaling method should be \'direct\' or \'bicubic\'.')
 

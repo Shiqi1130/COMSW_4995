@@ -18,19 +18,13 @@ def main():
         print('Direct Downscaling, Scaling factor x2 Model')
         model_path = 'Model/Directx2'
     elif args.model ==1:
-        print('Direct Downscaling, Multi-scale Model')
-        model_path = 'Model/Multi-scale'
-    elif args.model ==2:
-        print('Bicubic Downscaling, Scaling factor x2 Model')
-        model_path = 'Model/Bicubicx2'
-    elif args.model ==3:
         print('Direct Downscaling, Scaling factor x4 Model')
         model_path = 'Model/Directx4'
 
     img_path=sorted(glob.glob(os.path.join(args.inputpath, '*.png')))
     gt_path=sorted(glob.glob(os.path.join(args.gtpath, '*.png')))
 
-    scale=4.0
+    scale=args.scale
 
     try:
         kernel=scipy.io.loadmat(args.kernelpath)['kernel']
