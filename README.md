@@ -15,11 +15,13 @@ output includes the directory and the name of the image you have processed.
 ## MZSR
 Credit goes to https://github.com/JWSoh/MZSR
 type in :
+```
 python main.py --gpu 0 --inputpath Input/set/ --gtpath GT/set/ --savepath results/scale4 --kernelpath Input/g20/kernel.mat --model 1 --num 5  --scale 4
+```
 to run code with 5 iterations and scale is 4. 
 We have 2 models with scaling factors 2 and 4 respectively.
 Input has 2 files, one is for scale 2 and the other is for sacle 4.The original pictures are in GT.
-MZSR can enhance the resolution within few iterations.
+MZSR can enhance the resolution within few iterations, which is faster than SinGAN.
 
 
 ## SinGAN
