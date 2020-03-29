@@ -5,7 +5,6 @@ Our project aims to generate a smooth video based on a super resolution (SR) ima
 ##To downsample image you want to train:
 ```
 python image_process.py width height downsample_factor input output
-
 ```
 width and height is the resolution power of original image.
 downsample_factor is the dowsample factor.
