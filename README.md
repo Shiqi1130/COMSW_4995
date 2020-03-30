@@ -14,7 +14,8 @@ output includes the directory and the name of the image you have processed.
 
 ## MZSR
 Credit goes to https://github.com/JWSoh/MZSR.
-type in :
+
+Type in :
 ```
 python main.py --gpu 0 --inputpath Input/set/ --gtpath GT/set/ --savepath results/scale4 --kernelpath Input/g20/kernel.mat --model 1 --num 5  --scale 4
 ```
@@ -26,3 +27,12 @@ MZSR can enhance the resolution within few iterations, which is faster than SinG
 
 ## SinGAN
 Credit goes to https://github.com/tamarott/SinGAN
+
+To implement SR module, run
+```
+python SR.py --input_name <figure name.jpg> --sr_factor <upsampling scale, default=4>
+```
+
+
+## PSNR/SSIM
+PSNR is chosen to be the average of three channels (i.e. RGB), greater value means better performance, identical images would lead to infinity value. SSIM is in range of (0,1], again, greater value is better.
