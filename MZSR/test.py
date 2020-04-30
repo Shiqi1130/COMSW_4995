@@ -1,7 +1,7 @@
-import model
+import MZSR.model as model
 import time
 import imageio
-from utils import *
+from MZSR.utils import *
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior
 
@@ -68,7 +68,7 @@ class Test(object):
 
         self.loss = [None] * self.max_iters
         self.mse, self.mse_rec, self.interp_mse, self.interp_rec_mse, self.mse_steps = [], [], [], [], []
-        self.psnr=[]
+#         self.psnr=[]
         self.iter = 0
 
     def __call__(self, img, gt, img_name):
@@ -93,20 +93,20 @@ class Test(object):
         post_processed_output = self.final_test()
 
         if self.save_results:
-            if not os.path.exists('%s/%02d' % (self.save_path, self.max_iters)):
-                os.makedirs('%s/%02d' % (self.save_path, self.max_iters))
+#             if not os.path.exists('%s/%02d' % (self.save_path, self.max_iters)):
+#                 os.makedirs('%s/%02d' % (self.save_path, self.max_iters))
 
-            imageio.imsave('%s/%02d/%s.png' % (self.save_path, self.max_iters, os.path.basename(self.img_name)[:-4]),
-                                  post_processed_output)
+            imageio.imsave('%s/MZSR_iter=%02d_%s.png' % (self.save_path, self.max_iters, os.path.basename(self.img_name)[:-4]), post_processed_output)
 
-        print('** Done Adaptation for X', self.scale, os.path.basename(self.img_name),', PSNR: %.4f' % self.psnr[-1], ' **')
+#         print('** Done Adaptation for X', self.scale, os.path.basename(self.img_name),', PSNR: %.4f' % self.psnr[-1], ' **')
+        print('** Done Adaptation for X', self.scale, os.path.basename(self.img_name),'**')
         print('')
 
-        return post_processed_output, self.psnr
+        return post_processed_output#, self.psnr
 
     def train(self):
         self.hr_father = self.img
-        self.lr_son = imresize(self.img, scale=1/self.scale, kernel=self.kernel, ds_method=self.ds_method)
+        self.lr_son = imageresize(self.img, scale=1/self.scale, kernel=self.kernel, ds_method=self.ds_method)
         self.lr_son = np.clip(self.lr_son + np.random.randn(*self.lr_son.shape) * self.noise_level, 0., 1.)
 
         t1=time.time()
@@ -150,14 +150,14 @@ class Test(object):
         print('%.2f seconds' % (t2 - t1))
 
     def forward_pass(self, input, output_shape=None):
-        ILR = imresize(input, self.scale, output_shape, self.upscale_method)
+        ILR = imageresize(input, self.scale, output_shape, self.upscale_method)
         feed_dict = {self.input : ILR[None,:,:,:]}
 
         output_=self.sess.run(self.output, feed_dict)
         return np.clip(np.squeeze(output_), 0., 1.)
 
     def forward_backward_pass(self, input, hr_father):
-        ILR = imresize(input, self.scale, hr_father.shape, self.upscale_method)
+        ILR = imageresize(input, self.scale, hr_father.shape, self.upscale_method)
 
         HR = hr_father[None, :, :, :]
 
@@ -169,7 +169,7 @@ class Test(object):
         return np.clip(np.squeeze(train_output), 0., 1.)
 
     def hr2lr(self, hr):
-        lr = imresize(hr, 1.0 / self.scale, kernel=self.kernel, ds_method=self.ds_method)
+        lr = imageresize(hr, 1.0 / self.scale, kernel=self.kernel, ds_method=self.ds_method)
         return np.clip(lr + np.random.randn(*lr.shape) * self.noise_level, 0., 1.)
 
     def quick_test(self):
@@ -180,11 +180,11 @@ class Test(object):
 
         '''Shave'''
         scale=int(self.scale)
-        PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8))[scale:-scale, scale:-scale],
-                  rgb2y(np.round(np.clip(self.sr*255., 0., 255.)).astype(np.uint8))[scale:-scale, scale:-scale])
+#         PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8))[scale:-scale, scale:-scale],
+#                   rgb2y(np.round(np.clip(self.sr*255., 0., 255.)).astype(np.uint8))[scale:-scale, scale:-scale])
 
         # PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8)), rgb2y(np.round(np.clip(self.sr*255., 0., 255.)).astype(np.uint8)))
-        self.psnr.append(PSNR)
+#         self.psnr.append(PSNR)
 
         # 2. Reconstruction MSE
         self.reconstruct_output = self.forward_pass(self.hr2lr(self.img), self.img.shape)
@@ -192,7 +192,8 @@ class Test(object):
 
         processed_output=np.round(np.clip(self.sr*255, 0., 255.)).astype(np.uint8)
 
-        print('iteration: ', self.iter, 'recon mse:', self.mse_rec[-1], ', true mse:', (self.mse[-1] if self.mse else None), ', PSNR: %.4f' % PSNR)
+#         print('iteration: ', self.iter, 'recon mse:', self.mse_rec[-1], ', true mse:', (self.mse[-1] if self.mse else None), ', PSNR: %.4f' % PSNR)
+        print('iteration: ', self.iter, 'recon mse:', self.mse_rec[-1], ', true mse:', (self.mse[-1] if self.mse else None))
 
         return processed_output
 
@@ -208,9 +209,9 @@ class Test(object):
 
         '''Shave'''
         scale=int(self.scale)
-        PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8))[scale:-scale, scale:-scale],
-                  rgb2y(processed_output)[scale:-scale, scale:-scale])
+#         PSNR=psnr(rgb2y(np.round(np.clip(self.gt*255., 0.,255.)).astype(np.uint8))[scale:-scale, scale:-scale],
+#                   rgb2y(processed_output)[scale:-scale, scale:-scale])
 
-        self.psnr.append(PSNR)
+#         self.psnr.append(PSNR)
 
         return processed_output

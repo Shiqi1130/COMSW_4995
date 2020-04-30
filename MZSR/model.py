@@ -1,4 +1,4 @@
-from ops import *
+from MZSR.ops import *
 
 class Weights(object):
     def __init__(self, scope=None):

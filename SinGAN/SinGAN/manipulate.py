@@ -1,10 +1,10 @@
 from __future__ import print_function
-import SinGAN.functions
-import SinGAN.models
-import argparse
 import os
+import SinGAN.SinGAN.functions
+import SinGAN.SinGAN.models
+import argparse
 import random
-from SinGAN.imresize import imresize
+from SinGAN.SinGAN.imresize import imresize
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data
@@ -17,8 +17,9 @@ from skimage import color
 import math
 import imageio
 import matplotlib.pyplot as plt
-from SinGAN.training import *
-from config import get_arguments
+from SinGAN.SinGAN.training import *
+from SinGAN.config import get_arguments
+
 
 def generate_gif(Gs,Zs,reals,NoiseAmp,opt,alpha=0.1,beta=0.9,start_scale=2,fps=10):
 
@@ -79,11 +80,7 @@ def generate_gif(Gs,Zs,reals,NoiseAmp,opt,alpha=0.1,beta=0.9,start_scale=2,fps=1
             images_cur.append(I_curr)
         count += 1
     dir2save = functions.generate_dir2save(opt)
-    try:
-        os.makedirs('%s/start_scale=%d' % (dir2save,start_scale) )
-    except OSError:
-        pass
-    imageio.mimsave('%s/start_scale=%d/alpha=%f_beta=%f.gif' % (dir2save,start_scale,alpha,beta),images_cur,fps=fps)
+    imageio.mimsave('%s/%s_start_scale=%d_beta=%.2f.gif' % (dir2save,opt.input_name[:-4],start_scale,beta),images_cur,fps=fps)
     del images_cur
 
 def SinGAN_generate(Gs,Zs,reals,NoiseAmp,opt,in_s=None,scale_v=1,scale_h=1,n=0,gen_start_scale=0,num_samples=50):

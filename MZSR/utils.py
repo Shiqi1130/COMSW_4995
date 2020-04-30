@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 import re
 import math
-from imresize import imresize
+from MZSR.imageresize import imageresize
 
 from time import strftime, localtime
 
@@ -77,7 +77,7 @@ def modcrop(imgs, modulo):
     return out
 
 def back_projection(y_sr, y_lr, down_kernel, up_kernel, sf=None, ds_method='direct'):
-    y_sr += imresize(y_lr - imresize(y_sr, scale=1.0/sf, output_shape=y_lr.shape, kernel=down_kernel, ds_method=ds_method),
+    y_sr += imageresize(y_lr - imageresize(y_sr, scale=1.0/sf, output_shape=y_lr.shape, kernel=down_kernel, ds_method=ds_method),
                      scale=sf,
                      output_shape=y_sr.shape,
                      kernel=up_kernel)

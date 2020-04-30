@@ -1,12 +1,14 @@
-import SinGAN.functions as functions
-import SinGAN.models as models
 import os
+import SinGAN.SinGAN.functions as functions
+import SinGAN.SinGAN.models as models
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data
 import math
 import matplotlib.pyplot as plt
-from SinGAN.imresize import imresize
+from SinGAN.SinGAN.imresize import imresize
+
+
 
 def train(opt,Gs,Zs,reals,NoiseAmp):
     real_ = functions.read_image(opt)

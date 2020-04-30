@@ -1,0 +1,122 @@
+from SinGAN.config import get_arguments
+from SinGAN.SinGAN.manipulate import *
+from SinGAN.SinGAN.training import *
+from SinGAN.SinGAN.imresize import imresize
+import SinGAN.SinGAN.functions as functions
+
+import MZSR.test as test
+from MZSR.utils import *
+import numpy as np
+import glob
+import scipy.io
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior
+
+
+def MZSR_SR(opt):
+    conf=tf.ConfigProto()
+    conf.gpu_options.per_process_gpu_memory_fraction=0.95
+    
+    scale=opt.sr_factor
+    if scale == 2:
+        print('Direct Downscaling, Scaling factor x2 Model')
+        model_path = 'MZSR/Model/Directx2'
+        model=0
+    elif scale == 4:
+        print('Direct Downscaling, Scaling factor x4 Model')
+        model_path = 'MZSR/Model/Directx4'
+        model=1
+
+    img_path = os.path.join(opt.input_dir, opt.input_name)
+    gt_path = os.path.join(opt.gtpath, opt.input_name.split('_')[0]+'.png')
+
+    try:
+        kernel=scipy.io.loadmat(opt.kernelpath)['kernel']
+    except:
+        kernel='cubic'
+
+    Tester=test.Test(model_path, opt.out, kernel, scale, conf, model, opt.num_of_adaptation)
+    img=imread(img_path)
+    gt=imread(gt_path)
+    Tester(img, gt, img_path)
+
+
+def SinGAN_SR(opt):
+    Gs = []
+    Zs = []
+    reals = []
+    NoiseAmp = []
+    dir2save = functions.generate_dir2save(opt)
+    if dir2save is None:
+        print('task does not exist')
+    #elif (os.path.exists(dir2save)):
+    #    print("output already exist")
+    else:
+        try:
+            os.makedirs(dir2save)
+        except OSError:
+            pass
+
+        mode = opt.mode
+        in_scale, iter_num = functions.calc_init_scale(opt)
+        opt.scale_factor = 1 / in_scale
+        opt.scale_factor_init = 1 / in_scale
+        opt.mode = 'train'
+        dir2trained_model = functions.generate_dir2save(opt)
+        if (os.path.exists(dir2trained_model)):
+            Gs, Zs, reals, NoiseAmp = functions.load_trained_pyramid(opt)
+            opt.mode = mode
+        else:
+            print('*** Train SinGAN for SR ***')
+            real = functions.read_image(opt)
+            opt.min_size = 18
+            real = functions.adjust_scales2image_SR(real, opt)
+            train(opt, Gs, Zs, reals, NoiseAmp)
+            opt.mode = mode
+        print('%f' % pow(in_scale, iter_num))
+        Zs_sr = []
+        reals_sr = []
+        NoiseAmp_sr = []
+        Gs_sr = []
+        real = reals[-1]  # read_image(opt)
+        real_ = real
+        opt.scale_factor = 1 / in_scale
+        opt.scale_factor_init = 1 / in_scale
+        for j in range(1, iter_num + 1, 1):
+            real_ = imresize(real_, pow(1 / opt.scale_factor, 1), opt)
+            reals_sr.append(real_)
+            Gs_sr.append(Gs[-1])
+            NoiseAmp_sr.append(NoiseAmp[-1])
+            z_opt = torch.full(real_.shape, 0, device=opt.device)
+            m = nn.ZeroPad2d(5)
+            z_opt = m(z_opt)
+            Zs_sr.append(z_opt)
+        out = SinGAN_generate(Gs_sr, Zs_sr, reals_sr, NoiseAmp_sr, opt, in_s=reals_sr[0], num_samples=1)
+        out = out[:, :, 0:int(opt.sr_factor * reals[-1].shape[2]), 0:int(opt.sr_factor * reals[-1].shape[3])]
+        dir2save = functions.generate_dir2save(opt)
+        plt.imsave('%s/SinGAN_%s.png' % (dir2save,opt.input_name[:-4]), functions.convert_image_np(out.detach()), vmin=0, vmax=1)
+
+
+if __name__ == '__main__':
+    parser = get_arguments()
+    parser.add_argument('--method', help='SinGAN or MZSR', choices=['SinGAN','MZSR'], required=True)
+    parser.add_argument('--input_dir', help='input image dir', default='Input/LR')
+    parser.add_argument('--input_name', help='training image name', required=True)
+    parser.add_argument('--sr_factor', type=int, help='super resolution factor', choices=[2,4], default=4)
+    parser.add_argument('--mode', help='task to be done', default='SR')
+    parser.add_argument('--out',help='output folder',default='Output/SR_image')
+    parser.add_argument('--gtpath', type=str, dest='gtpath', default='Input/GT')
+    parser.add_argument('--kernelpath', type=str, dest='kernelpath', default='MZSR/Input/g20/kernel.mat')
+    parser.add_argument('--num', type=int, dest='num_of_adaptation', choices=[1,5,10], default=1)
+    parser.add_argument('--gpu', type=str, dest='gpu', default='0')
+    args = parser.parse_args()
+    if args.method == 'MZSR':
+        MZSR_SR(args)
+    else:
+        args = functions.post_config(args)
+        SinGAN_SR(args)
+    
+    
+
+
+
