@@ -1,5 +1,5 @@
 # Video Generation Based on a Single Image after Super-Resolution
-This repo is for COMS4995 course project.
+This repo is created for deep learning course project.  
 Our project aims to generate a smooth super resolution video based on a low resolution image. The first part of our project is to implement two models, Zero-Shot Super Resolution3(MZSR) and SinGAN, to generate SR images. The second part is to use SinGAN to generate videos from SR images given by the previous step. 
 
 ## Brief Explanation of Contents
@@ -10,8 +10,8 @@ Our project aims to generate a smooth super resolution video based on a low reso
 ├── Output: 
     ├──> SR_image: SR images (480*320) created by MZSR or SinGAN
     ├──> SR_video: videos created by SinGAN from SR images
-├── MZSR: implementation of MZSR
-├── SinGAN: implementation of SinGAN
+├── MZSR: modified from previous MZSR works 
+├── SinGAN: modified from previous SinGAN works
 ├── SR.py: super resolution
 ├── SR_video.py: SR & video generation
 ├── downsample.py: downsample imamges by factor of 2 or 4
