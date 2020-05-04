@@ -27,13 +27,13 @@ python downsample.py --original_file <filename> --lr_factor <downsample factor, 
 ## Super Resolution
 To do SR task on a downsampled image, run:
 ```
-python SR.py --method <['SinGAN','MZSR']> --sr_factor <scaling factor, [2,4]> --input_name <filename> --num <number of iterations of MZSR, [1,5,10]>
+python SR.py --method <['SinGAN','MZSR']> --sr_factor <scaling factor, [2,4]> --input_name <filename> --num <number of iterations of MZSR, [1,5,10]> --max_size 480
 ```
 
 ## Super Resolution Video
 To generate a video from an SR image, run:
 ```
-python SR_video.py --method <['SinGAN','MZSR']> --sr_factor <scaling factor, [2,4]> --input_name <filename> --num <number of iterations of MZSR, [1,5,10]> --animation_start_scale <generation start scale, [0,1,2]> --beta_animation <animation random walk second moment, [0.80,0.85,0.90,0.95]>
+python SR_video.py --method <['SinGAN','MZSR']> --sr_factor <scaling factor, [2,4]> --input_name <filename> --num <number of iterations of MZSR, [1,5,10]> --animation_start_scale <generation start scale, [0,1,2]> --beta_animation <animation random walk second moment, [0.80,0.85,0.90,0.95]> --max_size 480
 ```
 
 ## PSNR/SSIM
